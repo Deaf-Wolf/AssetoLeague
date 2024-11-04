@@ -1,0 +1,39 @@
+name: build and test and deploy
+
+# Run workflow on every push to the master branch
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+# Add this permissions block
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-to-github-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          
+      - name: Install .NET WASM Build Tools
+        run: dotnet workload install wasm-tools
+      
+      - name: Publish .NET Core Project
+        run: dotnet publish ./AssetoLeague.csproj -c:Release -p:GHPages=true -o dist/AssetoLeague --nologo
+      
+      - name: Commit wwwroot to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist/AssetoLeague/wwwroot
