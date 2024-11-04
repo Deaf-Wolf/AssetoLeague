@@ -9,6 +9,12 @@ on:
     branches:
       - master
 
+# Add this permissions block
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   deploy-to-github-pages:
     runs-on: ubuntu-latest
